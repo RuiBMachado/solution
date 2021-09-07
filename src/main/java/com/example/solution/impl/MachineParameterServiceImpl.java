@@ -9,8 +9,6 @@ import com.example.solution.dto.MachineStatsDTO;
 import com.example.solution.dto.MachineParameterDTO;
 import com.example.solution.service.MachineParameterService;
 import com.google.common.math.Quantiles;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -25,31 +23,29 @@ public class MachineParameterServiceImpl implements MachineParameterService {
 
    private final MachineParameterRepository machineParameterRepository;
    private final MachineService machineService;
-    Logger logger = LoggerFactory.getLogger(MachineParameterServiceImpl.class);
 
 
- public MachineParameterServiceImpl(MachineParameterRepository machineParameterRepository, MachineService machineService) {
-  this.machineParameterRepository = machineParameterRepository;
-  this.machineService = machineService;
- }
-@Override
- public void insertMachineParameter(List<MachineParameterDTO> machineParameterDTO){
+   public MachineParameterServiceImpl(MachineParameterRepository machineParameterRepository, MachineService machineService) {
+      this.machineParameterRepository = machineParameterRepository;
+      this.machineService = machineService;
+   }
 
-     for(MachineParameterDTO machineParameterDTO1 : machineParameterDTO){
-         Optional<Machine> existMachine = machineService.checkIfExistsMachine(machineParameterDTO1.getMachineKey());
-         existMachine.ifPresent(machine -> checkIfExistParametersOtherwiseSave(machineParameterDTO1.getMachineParameters(), machine));
-     }
+   @Override
+   public void insertMachineParameter(List<MachineParameterDTO> machineParameterDTO){
+
+       for(MachineParameterDTO machineParameterDTO1 : machineParameterDTO){
+           Optional<Machine> existMachine = machineService.checkIfExistsMachine(machineParameterDTO1.getMachineKey());
+           existMachine.ifPresent(machine -> checkIfExistParametersOtherwiseSave(machineParameterDTO1.getMachineParameters(), machine));
+       }
 
     }
 
     private void checkIfExistParametersOtherwiseSave(List<Parameter> parameters,Machine machine){
-        List<Parameter> parameterToSave = new ArrayList<>();
-        for(Parameter p: parameters){
-
-                p.setMachine(machine);
-                p.setDateTime(Instant.now());
-                parameterToSave.add(p);
-
+       List<Parameter> parameterToSave = new ArrayList<>();
+       for(Parameter p: parameters){
+           p.setMachine(machine);
+           p.setDateTime(Instant.now());
+           parameterToSave.add(p);
         }
 
         machineParameterRepository.saveAll(parameterToSave);
@@ -71,7 +67,7 @@ public class MachineParameterServiceImpl implements MachineParameterService {
             }
 
         }
-    return parameterList;
+        return parameterList;
 
     }
 
@@ -95,26 +91,26 @@ public class MachineParameterServiceImpl implements MachineParameterService {
     }
 
     private List<MachineStatsDTO> calculateStatsForMachineParameters(List<Parameter> machineParameters){
-        List<String> parameterAlreadyVerified = new ArrayList<>();
         List<MachineStatsDTO> machineStatsDTOList = new ArrayList<>();
-        for(Parameter parameter : machineParameters){
 
-            if(!parameterAlreadyVerified.contains(parameter.getKey())){
-                MachineStatsDTO machineStatsDTO = new MachineStatsDTO();
+        Map<String, List<Parameter>> parametersGrouped = machineParameters.stream()
+            .collect(Collectors.groupingBy(Parameter::getKey));
 
-                parameterAlreadyVerified.add(parameter.getKey());
-                List<Parameter> parameterFiltered = machineParameters.stream().filter(p -> p.getKey().equals(parameter.getKey())).collect(Collectors.toList());
+        for (Map.Entry<String, List<Parameter>> entry : parametersGrouped.entrySet()) {
+            String key = entry.getKey();
+            List<Parameter> parameterList = entry.getValue();
+            MachineStatsDTO machineStatsDTO = new MachineStatsDTO();
 
-                machineStatsDTO.setMax(calculateMax(parameterFiltered));
-                machineStatsDTO.setMin(calculateMin(parameterFiltered));
-                machineStatsDTO.setMedian(calculateMedian(parameterFiltered));
-                machineStatsDTO.setAverage(calculateAverage(parameterFiltered));
-                machineStatsDTO.setParameter(parameter.getKey());
-                machineStatsDTO.setMachine(parameter.getMachine().getKey());
+            machineStatsDTO.setMax(calculateMax(parameterList));
+            machineStatsDTO.setMin(calculateMin(parameterList));
+            machineStatsDTO.setMedian(calculateMedian(parameterList));
+            machineStatsDTO.setAverage(calculateAverage(parameterList));
+            machineStatsDTO.setParameter(key);
+            machineStatsDTO.setMachine(parameterList.get(0).getMachine().getKey());
 
-                machineStatsDTOList.add(machineStatsDTO);
-            }
+            machineStatsDTOList.add(machineStatsDTO);
         }
+
         return machineStatsDTOList;
 
     }

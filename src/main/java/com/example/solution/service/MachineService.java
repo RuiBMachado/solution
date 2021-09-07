@@ -13,6 +13,5 @@ public interface MachineService {
 
      Optional<Machine> checkIfExistsMachine(String machine);
 
-
      List<Long> getParametersIds();
 }
