@@ -47,8 +47,9 @@ public class MachineParameterServiceImpl implements MachineParameterService {
            p.setDateTime(Instant.now());
            parameterToSave.add(p);
         }
-
-        machineParameterRepository.saveAll(parameterToSave);
+        if(!parameterToSave.isEmpty()){
+            machineParameterRepository.saveAll(parameterToSave);
+        }
     }
 
     @Override

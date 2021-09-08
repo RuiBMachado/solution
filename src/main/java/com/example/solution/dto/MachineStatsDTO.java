@@ -34,4 +34,28 @@ public class MachineStatsDTO implements Serializable {
     public void setParameter(String parameter) {
         this.parameter = parameter;
     }
+
+    public Double getAverage() {
+        return average;
+    }
+
+    public Double getMedian() {
+        return median;
+    }
+
+    public Double getMin() {
+        return min;
+    }
+
+    public Double getMax() {
+        return max;
+    }
+
+    public String getMachine() {
+        return machine;
+    }
+
+    public String getParameter() {
+        return parameter;
+    }
 }
