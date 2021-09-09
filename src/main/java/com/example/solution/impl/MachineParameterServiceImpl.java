@@ -30,17 +30,27 @@ public class MachineParameterServiceImpl implements MachineParameterService {
       this.machineService = machineService;
    }
 
+    /**
+     * Method to start the process of save a parameter for each machine
+     * For each {@link MachineParameterDTO} check if the respective machine exists and then proceed with the association process
+     * @param machineParameterDTO List of {@link MachineParameterDTO}
+     */
    @Override
    public void insertMachineParameter(List<MachineParameterDTO> machineParameterDTO){
 
        for(MachineParameterDTO machineParameterDTO1 : machineParameterDTO){
            Optional<Machine> existMachine = machineService.checkIfExistsMachine(machineParameterDTO1.getMachineKey());
-           existMachine.ifPresent(machine -> checkIfExistParametersOtherwiseSave(machineParameterDTO1.getMachineParameters(), machine));
+           existMachine.ifPresent(machine -> associateMachineAndDateToParameterAndSave(machineParameterDTO1.getMachineParameters(), machine));
        }
 
     }
 
-    private void checkIfExistParametersOtherwiseSave(List<Parameter> parameters,Machine machine){
+    /**
+     * Method to associate a machine and a date for each parameter and save them
+     * @param parameters List of {@link Parameter}
+     * @param machine {@link Machine} to associate
+     */
+    private void associateMachineAndDateToParameterAndSave(List<Parameter> parameters,Machine machine){
        List<Parameter> parameterToSave = new ArrayList<>();
        for(Parameter p: parameters){
            p.setMachine(machine);
@@ -52,10 +62,14 @@ public class MachineParameterServiceImpl implements MachineParameterService {
         }
     }
 
+    /**
+     * Method to get the latest parameter for each machine that exists in system
+     * @return List of {@link MachineParameterDTO}
+     */
     @Override
     public List<MachineParameterDTO> getLatestParameterForMachine(){
 
-        List<Long> machinesIds= machineService.getParametersIds();
+        List<Long> machinesIds= machineService.getMachineIds();
         List<MachineParameterDTO> parameterList = new ArrayList<>();
 
         for(Long machineId : machinesIds){
@@ -69,13 +83,17 @@ public class MachineParameterServiceImpl implements MachineParameterService {
 
         }
         return parameterList;
-
     }
 
+    /**
+     * Method to start the process to get the machine statistics for the last X minutes
+     * @param min Number of minutes
+     * @return List of {@link MachineStatsDTO}
+     */
     @Override
     public List<MachineStatsDTO> getMachineStats(Integer min){
 
-        List<Long> machinesIds= machineService.getParametersIds();
+        List<Long> machinesIds= machineService.getMachineIds();
         List<MachineStatsDTO> parameterList = new ArrayList<>();
 
         Instant nowLessXMinutes = Instant.now().minus(min, ChronoUnit.MINUTES);
@@ -91,6 +109,11 @@ public class MachineParameterServiceImpl implements MachineParameterService {
 
     }
 
+    /**
+     * Method to fill the {@link MachineStatsDTO} object with the statistics value for each parameter
+     * @param machineParameters List of {@link Parameter} with the machine parameters
+     * @return List of {@link MachineStatsDTO}
+     */
     private List<MachineStatsDTO> calculateStatsForMachineParameters(List<Parameter> machineParameters){
         List<MachineStatsDTO> machineStatsDTOList = new ArrayList<>();
 
@@ -116,22 +139,42 @@ public class MachineParameterServiceImpl implements MachineParameterService {
 
     }
 
+    /**
+     * Method to calculate the maximum value for a given list of {@link Parameter}
+     * @param parameterFiltered List of {@link Parameter} with the machine parameters
+     * @return Maximum value
+     */
     private Double calculateMax(List<Parameter> parameterFiltered){
 
         return parameterFiltered.stream().max(comparing(Parameter::getValue)).get().getValue();
     }
 
+    /**
+     * Method to calculate the minimum value for a given list of {@link Parameter}
+     * @param parameterFiltered List of {@link Parameter} with the machine parameters
+     * @return Minimum value
+     */
     private Double calculateMin(List<Parameter> parameterFiltered){
 
         return parameterFiltered.stream().min(comparing(Parameter::getValue)).get().getValue();
     }
 
+    /**
+     * Method to calculate the media for a given list of {@link Parameter}
+     * @param parameterFiltered List of {@link Parameter} with the machine parameters
+     * @return Median
+     */
     private Double calculateMedian(List<Parameter> parameterFiltered){
 
         List<Double> values = parameterFiltered.stream().map(Parameter::getValue).collect(Collectors.toList());
         return Quantiles.median().compute(values);
     }
 
+    /**
+     * Method to calculate the average for a given list of {@link Parameter}
+     * @param parameterFiltered List of {@link Parameter} with the machine parameters
+     * @return Average
+     */
     private Double calculateAverage(List<Parameter> parameterFiltered){
 
         return parameterFiltered.stream().mapToDouble(Parameter::getValue).average().orElse(0.0);

@@ -4,12 +4,12 @@ import java.io.Serializable;
 
 public class MachineStatsDTO implements Serializable {
 
-    Double average;
-    Double median;
-    Double min;
-    Double max;
-    String machine;
-    String parameter;
+    private Double average;
+    private Double median;
+    private Double min;
+    private Double max;
+    private String machine;
+    private String parameter;
 
     public void setAverage(Double average) {
         this.average = average;

@@ -12,12 +12,15 @@ import java.util.List;
 @RestController
 public class MachineParameterResource {
 
-    private MachineParameterService machineParameterService;
+    private final MachineParameterService machineParameterService;
 
     public MachineParameterResource(MachineParameterService machineParameterService) {
         this.machineParameterService = machineParameterService;
     }
 
+    /**
+     * Request to save a list of {@link MachineParameterDTO}
+     */
     @PostMapping("insert-machine-parameters")
     public ResponseEntity<HttpStatus> insertMachineParameters(@RequestBody List<MachineParameterDTO> machineParameter) {
 
@@ -26,6 +29,9 @@ public class MachineParameterResource {
 
     }
 
+    /**
+     * Request to get the latest machine parameter
+     */
     @GetMapping("get-latest-machine-parameter")
     public ResponseEntity<List<MachineParameterDTO>> getLatestMachineParameter() {
 
@@ -34,6 +40,9 @@ public class MachineParameterResource {
 
     }
 
+    /**
+     * Request to get the machine stats for the last X minutes
+     */
     @GetMapping("get-machine-stats/{min}")
     public ResponseEntity<List<MachineStatsDTO>> getLatestMachineParameter(@PathVariable Integer min) {
 

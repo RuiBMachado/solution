@@ -36,7 +36,7 @@ public class MachineServiceImplTest {
 
     @Test
     public void testGetParametersIds() {
-        machineService.getParametersIds();
+        machineService.getMachineIds();
         verify(machineRepository,times(1)).findAll();
     }
 }

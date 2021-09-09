@@ -89,7 +89,7 @@ public class MachineParameterServiceImplTest {
         m.setKey("1");
         Parameter p = new Parameter();
         p.setMachine(m);
-        when(machineService.getParametersIds()).thenReturn(Collections.singletonList(1L));
+        when(machineService.getMachineIds()).thenReturn(Collections.singletonList(1L));
         when(machineParameterRepository.findFirstByMachine_idEqualsOrderByDateTimeDesc(any())).thenReturn(p);
 
         List<MachineParameterDTO> machineParameterDTOList = machineParameterService.getLatestParameterForMachine();
@@ -98,7 +98,7 @@ public class MachineParameterServiceImplTest {
 
     @Test
     public void getLatestParameterForMachineNoMachineIds() {
-        when(machineService.getParametersIds()).thenReturn(new ArrayList<>());
+        when(machineService.getMachineIds()).thenReturn(new ArrayList<>());
         machineParameterService.getLatestParameterForMachine();
         verify(machineParameterRepository,times(0)).findFirstByMachine_idEqualsOrderByDateTimeDesc(any());
     }
@@ -107,7 +107,7 @@ public class MachineParameterServiceImplTest {
     @Test
     public void getLatestParameterForMachineNoParameterAvailable() {
 
-        when(machineService.getParametersIds()).thenReturn(Collections.singletonList(1L));
+        when(machineService.getMachineIds()).thenReturn(Collections.singletonList(1L));
         when(machineParameterRepository.findFirstByMachine_idEqualsOrderByDateTimeDesc(any())).thenReturn(null);
 
         List<MachineParameterDTO> machineParameterDTOList = machineParameterService.getLatestParameterForMachine();
@@ -128,10 +128,10 @@ public class MachineParameterServiceImplTest {
         parameterList.add(parameter);
         parameterList.add(parameter1);
 
-        when(machineService.getParametersIds()).thenReturn(Collections.singletonList(1L));
+        when(machineService.getMachineIds()).thenReturn(Collections.singletonList(1L));
         when(machineParameterRepository.findByMachineIdEqualsAndDateTimeGreaterThanAndDateTimeLessThan(any(),any(),any())).thenReturn(parameterList);
         List<MachineStatsDTO> machineStatsDTOList = machineParameterService.getMachineStats(5);
-
+        assertEquals(machineStatsDTOList.get(0).getMax(),20d,0);
         assertEquals(machineStatsDTOList.get(0).getAverage(),15d,0);
         assertEquals(machineStatsDTOList.get(0).getMin(),10d,0);
         assertEquals(machineStatsDTOList.get(0).getMedian(),15d,0);
@@ -141,7 +141,7 @@ public class MachineParameterServiceImplTest {
 
     @Test
     public void getMachineStatsNoMachineIds() {
-        when(machineService.getParametersIds()).thenReturn(new ArrayList<>());
+        when(machineService.getMachineIds()).thenReturn(new ArrayList<>());
         machineParameterService.getMachineStats(5);
         verify(machineParameterRepository,times(0)).findFirstByMachine_idEqualsOrderByDateTimeDesc(any());
     }

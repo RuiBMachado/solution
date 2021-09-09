@@ -13,12 +13,15 @@ import java.util.List;
 @RestController
 public class MachineDataResource {
 
-    private MachineService machineService;
+    private final MachineService machineService;
 
     public MachineDataResource(MachineService machineService) {
         this.machineService = machineService;
     }
 
+    /**
+     * Request to save a list of {@link Machine}
+     */
     @PostMapping("/insert-machine-data")
     public ResponseEntity<HttpStatus> insertMachineData(@RequestBody List<Machine> machineData) {
        machineService.save(machineData);

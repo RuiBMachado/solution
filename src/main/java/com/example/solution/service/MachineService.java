@@ -8,10 +8,25 @@ import java.util.Optional;
 
 @Service
 public interface MachineService {
-
+    /**
+     * Method to save a list of machines
+     *
+     * @param machine List of Machine to save
+     */
      void save(List<Machine> machine);
 
-     Optional<Machine> checkIfExistsMachine(String machine);
+     /**
+     * Method to search for a machine given a machine key
+     *
+     * @param machineKey Machine key to search for
+     * @return Optional<Machine> or Optional empty
+     */
+     Optional<Machine> checkIfExistsMachine(String machineKey);
 
-     List<Long> getParametersIds();
+    /**
+     * Method to get all machines Ids
+     *
+     * @return list of all machine Ids
+     */
+     List<Long> getMachineIds();
 }
