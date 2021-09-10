@@ -21,7 +21,7 @@ public class MachineParameterResource {
     /**
      * Request to save a list of {@link MachineParameterDTO}
      */
-    @PostMapping("insert-machine-parameters")
+    @PostMapping("/insert-machine-parameters")
     public ResponseEntity<HttpStatus> insertMachineParameters(@RequestBody List<MachineParameterDTO> machineParameter) {
 
         machineParameterService.insertMachineParameter(machineParameter);
@@ -32,7 +32,7 @@ public class MachineParameterResource {
     /**
      * Request to get the latest machine parameter
      */
-    @GetMapping("get-latest-machine-parameter")
+    @GetMapping("/get-latest-machine-parameter")
     public ResponseEntity<List<MachineParameterDTO>> getLatestMachineParameter() {
 
         List<MachineParameterDTO>parameterList=machineParameterService.getLatestParameterForMachine();
@@ -43,7 +43,7 @@ public class MachineParameterResource {
     /**
      * Request to get the machine stats for the last X minutes
      */
-    @GetMapping("get-machine-stats/{min}")
+    @GetMapping("/get-machine-stats/{min}")
     public ResponseEntity<List<MachineStatsDTO>> getLatestMachineParameter(@PathVariable Integer min) {
 
         List<MachineStatsDTO>machineStatsDTOS=machineParameterService.getMachineStats(min);
