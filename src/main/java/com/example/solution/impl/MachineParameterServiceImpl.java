@@ -11,6 +11,7 @@ import com.example.solution.service.MachineParameterService;
 import com.google.common.math.Quantiles;
 import org.springframework.stereotype.Component;
 
+import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -36,6 +37,7 @@ public class MachineParameterServiceImpl implements MachineParameterService {
      * @param machineParameterDTO List of {@link MachineParameterDTO}
      */
    @Override
+   @Transactional
    public void insertMachineParameter(List<MachineParameterDTO> machineParameterDTO){
 
        for(MachineParameterDTO machineParameterDTO1 : machineParameterDTO){
@@ -67,6 +69,7 @@ public class MachineParameterServiceImpl implements MachineParameterService {
      * @return List of {@link MachineParameterDTO}
      */
     @Override
+    @Transactional
     public List<MachineParameterDTO> getLatestParameterForMachine(){
 
         List<Long> machinesIds= machineService.getMachineIds();
@@ -91,6 +94,7 @@ public class MachineParameterServiceImpl implements MachineParameterService {
      * @return List of {@link MachineStatsDTO}
      */
     @Override
+    @Transactional
     public List<MachineStatsDTO> getMachineStats(Integer min){
 
         List<Long> machinesIds= machineService.getMachineIds();

@@ -4,6 +4,7 @@ import com.example.solution.domain.Machine;
 import com.example.solution.repository.MachineRepository;
 import com.example.solution.service.MachineService;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,7 @@ public class MachineServiceImpl implements MachineService {
      * @return Optional<Machine> or Optional empty
      */
     @Override
+    @Transactional
     public Optional<Machine> checkIfExistsMachine(String machineKey){
        return machineRepository.findMachineByKeyEquals(machineKey);
     }
@@ -35,6 +37,7 @@ public class MachineServiceImpl implements MachineService {
      * @param machine List of Machine to save
      */
     @Override
+    @Transactional
     public void save(List<Machine> machine) {
         machineRepository.saveAll(machine);
     }
@@ -45,6 +48,7 @@ public class MachineServiceImpl implements MachineService {
      * @return list of all machine Ids
      */
     @Override
+    @Transactional
     public List<Long> getMachineIds() {
         return machineRepository.findAll().stream().map(Machine::getId).collect(Collectors.toList());
     }
